@@ -1,0 +1,10 @@
+.git
+.env*
+node_modules
+vendor
+storage
+work
+outputs
+test-results
+.deploy-key.pub.line
+bootstrap/cache/*.php

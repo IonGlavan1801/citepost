@@ -1,0 +1,11 @@
+# Architecture
+
+Browser → Cloudflare wildcard tunnel → Traefik → unique citepost Nginx → Laravel PHP-FPM. Redis/Horizon runs asynchronous parsing/chunking/embedding jobs. A private FastAPI service uses pypdf, BGE-small-en-v1.5 embeddings (384 dimensions) and FlashRank MiniLM reranking on CPU. Groq gpt-oss-20b receives only selected passages and a factual-answer JSON contract, with no tool access.
+
+Public session cookies reference server-created workspace IDs; clients cannot select a tenant. Demo sessions clone an indexed synthetic template so IDs/context are tenant-specific. Every lexical/vector query scopes workspace and collection before ranking, pins document versions, and excludes deleted sources. Queries record context/index/config snapshots; historical source locators retain immutable version references.
+
+Ingestion: validate PDF signature/MIME/size, parse limited pages, heuristic structure/chunk boundaries, batch embeddings, transactionally write version chunks and activate a complete index. Lock per version plus unique ordinal gives logical idempotency. Retries leave the old ready version usable. Raw source PDFs are private files. Small corpora use exact pgvector scan; no claim of measured ANN advantage. PostgreSQL English full-text GIN and identifier substring matching combine with vector ranks via RRF k=60; up to 16 candidates rerank, four passages fit a 1600 estimated-token context budget.
+
+Evidence gate: calibrated cross-encoder score threshold and exact-identifier coverage. Raw similarities are not truth probabilities. Non-reranked fallback uses a conservative cosine threshold and remains visible. Groq JSON output is parsed and every factual segment requires known source IDs. Invalid output, timeouts and provider errors yield a controlled failure. Context token counts are character estimates; Groq usage tokens are actual provider reports. Pricing is versioned at the listed model's published rate, excludes CPU and is labeled estimated.
+
+Private volume storage is the MVP object-storage implementation. No external document tools, arbitrary URLs, OCR or embedded PDF script execution. Source passages are HTML text with `x-text`, not trusted markup. The PDF viewer is the browser's native viewer. All mutation routes retain Laravel CSRF checking. Background TTL purge removes files, vectors, documents and query traces.

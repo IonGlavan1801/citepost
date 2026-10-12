@@ -1,0 +1,83 @@
+{
+    "threshold": 0.001,
+    "balanced_accuracy": 1,
+    "split": "tuning only; never held-out evaluation",
+    "timestamp": "2026-10-12T19:21:00+00:00",
+    "cases": [
+        {
+            "question": "How much clearance does the Atlas gateway need?",
+            "answerable": true,
+            "score": 0.999396800994873
+        },
+        {
+            "question": "Which Wi-Fi band does the gateway support?",
+            "answerable": true,
+            "score": 0.8164074420928955
+        },
+        {
+            "question": "How do I factory reset the gateway?",
+            "answerable": true,
+            "score": 0.964245617389679
+        },
+        {
+            "question": "What is included in a backup export?",
+            "answerable": true,
+            "score": 0.9991171956062317
+        },
+        {
+            "question": "What battery level is required for firmware updates?",
+            "answerable": true,
+            "score": 0.9998425245285034
+        },
+        {
+            "question": "How many events can the gateway buffer offline?",
+            "answerable": true,
+            "score": 0.9997864365577698
+        },
+        {
+            "question": "How many sensors can connect to one gateway?",
+            "answerable": true,
+            "score": 0.998755931854248
+        },
+        {
+            "question": "What is the operating temperature range?",
+            "answerable": true,
+            "score": 0.9764885902404785
+        },
+        {
+            "question": "What does a pulsing amber LED mean?",
+            "answerable": true,
+            "score": 0.9997034668922424
+        },
+        {
+            "question": "How much history is included in a support bundle?",
+            "answerable": true,
+            "score": 0.219681978225708
+        },
+        {
+            "question": "Who invented quantum teleportation?",
+            "answerable": false,
+            "score": 1.36792414195952e-5
+        },
+        {
+            "question": "How long is the extended insurance coverage?",
+            "answerable": false,
+            "score": 7.903939695097506e-5
+        },
+        {
+            "question": "What is the price of an Atlas subscription?",
+            "answerable": false,
+            "score": 6.389052578015253e-5
+        },
+        {
+            "question": "Who won the presidential election?",
+            "answerable": false,
+            "score": 1.4319494766823482e-5
+        },
+        {
+            "question": "What is the warranty period?",
+            "answerable": false,
+            "score": 1.7857038983493112e-5
+        }
+    ]
+}
