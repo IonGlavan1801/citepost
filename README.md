@@ -41,4 +41,4 @@ php artisan lab:evaluate --answers
 
 English models, heuristic paragraph/page chunking, max 5 MB/60 text-based PDF pages and three uploads per two-hour session. No OCR, complex table interpretation or token streaming. Sources open at the PDF page with a highlighted text passage beside it; PDF pixels are not highlighted. Volume-backed storage uses Laravel's Storage abstraction; an S3 deployment is a future extension. Multi-hop query decomposition, embedding-provider switch UI, generalized document update workflows and a video walkthrough are not included. The local reranker is allowed to fall back explicitly. Prompt injection remains a risk despite untrusted context boundaries and server-side authorization.
 
-See `docs/ARCHITECTURE.md`, `SECURITY.md`, `docs/RUNBOOK.md` and the measured evaluation for operational details.
+See `docs/ARCHITECTURE.md`, `SECURITY.md`, `docs/RUNBOOK.md`, `docs/EVALUATION.md` and the measured evaluation for operational details.

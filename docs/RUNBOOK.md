@@ -8,7 +8,7 @@ Production: `/home/johnny/development/citepost`, immutable archives under `.loca
 
 TTL: scheduler runs `lab:purge` every five minutes. Deployment backup cleanup must run at least every five minutes and delete backups older than two hours, so deleted uploads cannot survive indefinitely in snapshots. Files reside in the named storage volume; the corpus is synthetic and shared safely, upload keys are generated under a workspace path. Deletion deactivates the document and purges its private source and vectors. Do not restore an expired session from backup.
 
-Models are downloaded at image build and run on CPU with a two-thread limit; production VPS is 16 GB RAM, no GPU. Embedding vectors must never be mixed across models/dimensions. Changing the configured embedding implementation requires a new index version and rebuilding each affected document.
+Models are downloaded at image build and run on CPU with a two-thread limit; production VPS is 4 vCPUs (AMD EPYC 9354P host), 16 GB RAM, no GPU; model container is capped at 2 CPUs and 2 GB RAM. Embedding vectors must never be mixed across models/dimensions. Changing the configured embedding implementation requires a new index version and rebuilding each affected document.
 
 Groq configuration: `GROQ_API_KEY`, `GROQ_MODEL=openai/gpt-oss-20b`. Default pricing is tied to this model; update pricing version before switching models. API 401 is authentication, not a normal model permission failure. If local .env seems ignored, check for an inherited shell variable without printing its contents.
 
