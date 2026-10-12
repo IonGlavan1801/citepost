@@ -16,7 +16,7 @@ class LabHeaders
         $response->headers->set('Referrer-Policy', 'same-origin');
         $response->headers->set('Cache-Control', 'private, no-store');
         if (! $request->is('api/sources/*')) {
-            $response->headers->set('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://cloudflareinsights.com; frame-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'");
+            $response->headers->set('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://cloudflareinsights.com; frame-src 'self'; frame-ancestors 'self' https://syslora.com https://www.syslora.com; base-uri 'self'; form-action 'self'");
         }
 
         return $response;

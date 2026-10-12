@@ -151,4 +151,33 @@ class ReliabilityTest extends TestCase
         $this->getJson('/api/state')->assertOk()->assertJsonStructure(['documents', 'expires_at', 'model']);
         $this->assertSame(1, DB::table('workspaces')->count());
     }
+
+    public function test_repeated_ingestion_is_idempotent_and_activates_only_a_complete_version(): void
+    {
+        Storage::fake();
+        $w = $this->workspace();
+        $this->seedChunk($w, 'Old content');
+        Storage::put('new.pdf', '%PDF-1.4 synthetic');
+        DB::table('document_versions')->insert(['id' => 'new-version', 'document_id' => 'doc', 'index_version' => 'new-index', 'number' => 2, 'path' => 'new.pdf', 'status' => 'uploaded', 'steps' => '[]', 'metadata' => '{}']);
+        Http::fake(['*/parse' => Http::response(['pages' => [['page' => 1, 'text' => 'Updated procedure: hold the reset button for twelve seconds.']]]), '*/embed' => Http::response(['vectors' => [array_merge([1], array_fill(0, 383, 0))]])]);
+        for ($i = 0; $i < 10; $i++) {
+            app(IngestionService::class)->ingest('new-version');
+        }
+        $this->assertSame('new-version', DB::table('documents')->where('id', 'doc')->value('active_version'));
+        $this->assertSame('ready', DB::table('document_versions')->where('id', 'new-version')->value('status'));
+        $this->assertSame(1, DB::table('chunks')->where('version_id', 'new-version')->count());
+        Http::assertSentCount(2);
+    }
+
+    public function test_a_purged_upload_can_be_uploaded_again(): void
+    {
+        Queue::fake();
+        Storage::fake();
+        $w = $this->workspace();
+        $first = $this->withSession(['workspace' => $w])->post('/api/documents', ['file' => UploadedFile::fake()->createWithContent('source.pdf', '%PDF-1.4 synthetic text')])->assertAccepted()->json('id');
+        $this->deleteJson('/api/documents/'.$first)->assertOk();
+        $second = $this->post('/api/documents', ['file' => UploadedFile::fake()->createWithContent('source.pdf', '%PDF-1.4 synthetic text')])->assertAccepted()->json('id');
+        $this->assertNotSame($first, $second);
+        $this->assertSame(1, DB::table('documents')->where('workspace_id', $w)->count());
+    }
 }

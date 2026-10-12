@@ -56,6 +56,11 @@ class LabController extends Controller
         abort_unless(str_starts_with(file_get_contents($file->getRealPath(), false, null, 0, 5), '%PDF-'), 422, 'Invalid PDF signature');
         $hash = hash_file('sha256', $file->getRealPath());
         $same = DB::table('documents')->where('workspace_id', $id)->where('collection', 'upload')->where('checksum', $hash)->first();
+        if ($same && $same->deleted_at) {
+            DB::table('document_versions')->where('document_id', $same->id)->delete();
+            DB::table('documents')->where('id', $same->id)->delete();
+            $same = null;
+        }
         if ($same) {
             return response()->json(['id' => $same->id, 'duplicate' => true, 'message' => 'Same checksum: existing version reused, no duplicate embeddings.']);
         }

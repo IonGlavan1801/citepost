@@ -7,3 +7,10 @@ Implementation: Laravel 13 + Alpine interface; PostgreSQL 17/pgvector, Redis/Hor
 MVP decisions: private volume-backed file storage through Laravel Storage abstraction (S3 adapter is a future option); source PDF opens at page with adjacent highlighted text passage, not pixel-coordinate PDF highlights. Responses are returned after validation, without token streaming. OCR, provider switch UI and automatic multi-hop decomposition remain future extensions. These limits must be disclosed publicly. Implement the core reliability flows; never simulate AI metrics.
 
 Acceptance: PDF upload through queued ready/failed stages, document removal/reindex, real Groq answer with valid sources, actual vector/lexical/hybrid comparison, unknown-question abstention, inspector/context/usage, real evaluation metrics, explicit simulated failures, isolation tests and deployed desktop/mobile verification.
+
+## Delivery verification
+
+- Local backend: 16 tests / 2044 assertions, including 1000 cross-workspace retrieval checks.
+- Live browser integration passed on citepost.syslora.com: real Groq answer, comparison, source citation, cross-session denial, upload, reindex, delete and 390px inspector.
+- Calibration uses only separate tuning inputs; production held-out evaluation uses paced Groq calls.
+- Final release also grants Nginx ownership of static assets and allows the existing Cloudflare beacon and Syslora portfolio iframe.
