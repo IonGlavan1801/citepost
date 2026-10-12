@@ -47,8 +47,10 @@ class IngestionService
                 throw new \RuntimeException('No readable text. OCR is not supported.');
             }
             $start = microtime(true);
-            $vectors = $this->models->embed(array_map(fn ($c) => $c['section'].'
-'.$c['content'], $chunks));
+            $vectors = [];
+            foreach (array_chunk($chunks, 64) as $batch) {
+                $vectors = array_merge($vectors, $this->models->embed(array_map(fn ($c) => $c['section'].PHP_EOL.$c['content'], $batch)));
+            }
             $this->step($id, 'embedded', $start);
             if (count($vectors) !== count($chunks)) {
                 throw new \RuntimeException('Incomplete embedding batch');

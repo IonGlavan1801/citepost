@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 
 class AnswerService
@@ -45,7 +46,7 @@ class AnswerService
             if ($trace['failure'] === 'llm_timeout') {
                 throw new \RuntimeException('Simulated timeout');
             }
-            $response = Http::withToken(config('lab.groq_key'))->connectTimeout(5)->timeout(40)->retry(2, 2500, fn ($error) => $error instanceof Illuminate\Http\Client\RequestException && $error->response->status() === 429)->post('https://api.groq.com/openai/v1/chat/completions', ['model' => config('lab.groq_model'), 'reasoning_effort' => 'low', 'temperature' => 0, 'max_completion_tokens' => 1200, 'response_format' => ['type' => 'json_object'], 'messages' => [['role' => 'system', 'content' => self::PROMPT], ['role' => 'user', 'content' => json_encode(['question' => $question, 'SOURCE_DATA' => array_map(fn ($c) => ['source_id' => $c['source_id'], 'section' => $c['section'], 'text' => $c['content']], $trace['context'])])]]])->throw()->json();
+            $response = Http::withToken(config('lab.groq_key'))->connectTimeout(5)->timeout(40)->retry(2, 2500, fn ($error) => $error instanceof RequestException && $error->response->status() === 429)->post('https://api.groq.com/openai/v1/chat/completions', ['model' => config('lab.groq_model'), 'reasoning_effort' => 'low', 'temperature' => 0, 'max_completion_tokens' => 1200, 'response_format' => ['type' => 'json_object'], 'messages' => [['role' => 'system', 'content' => self::PROMPT], ['role' => 'user', 'content' => json_encode(['question' => $question, 'SOURCE_DATA' => array_map(fn ($c) => ['source_id' => $c['source_id'], 'section' => $c['section'], 'text' => $c['content']], $trace['context'])])]]])->throw()->json();
             $usage['input_tokens'] = $response['usage']['prompt_tokens'] ?? 0;
             $usage['output_tokens'] = $response['usage']['completion_tokens'] ?? 0;
             $usage['estimated_cost'] = ($usage['input_tokens'] * config('lab.pricing.input') + $usage['output_tokens'] * config('lab.pricing.output')) / 1000000;
@@ -56,7 +57,10 @@ class AnswerService
             $abstain = $answer['abstain'] ?? false;
             $result = ['status' => $abstain ? 'insufficient' : 'grounded', 'sentences' => $abstain ? [] : $answer['sentences'], 'message' => $abstain ? 'The sources do not support an answer to this question.' : null, 'citation_validity' => true];
         } catch (\Throwable $error) {
-            $result = ['status' => 'error', 'sentences' => [], 'message' => ($error instanceof Illuminate\Http\Client\RequestException && $error->response->status() === 429) ? 'GroqCloud rate limit reached. Please wait and retry. No unverified answer is displayed.' : 'The answer could not be completed or its citations could not be validated. No unverified answer is displayed.'];
+            $result = ['status' => 'error', 'sentences' => [], 'message' => ($error instanceof RequestException && $error->response->status() === 429) ? 'GroqCloud rate limit reached. Please wait and retry. No unverified answer is displayed.' : 'The answer could not be completed or its citations could not be validated. No unverified answer is displayed.'];
+        }
+        if ($result['status'] === 'error' && $usage['input_tokens'] === 0) {
+            $usage['estimated_cost'] = null;
         }
         $usage['llm_ms'] = round((microtime(true) - $start) * 1000, 2);
         $result['usage'] = $usage;

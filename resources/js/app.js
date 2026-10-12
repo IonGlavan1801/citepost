@@ -183,7 +183,7 @@ Alpine.data("lab", () => ({
         return Number(n || 0).toFixed(0) + " ms";
     },
     money(n) {
-        return "$" + Number(n || 0).toFixed(6);
+        return n === null ? "Unavailable" : "$" + Number(n || 0).toFixed(6);
     },
     get docs() {
         return this.state.documents.filter(

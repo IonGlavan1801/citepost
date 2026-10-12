@@ -9,6 +9,7 @@ use App\Services\RetrievalService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -19,8 +20,8 @@ class LabController extends Controller
         $id = $request->session()->get('workspace');
         if (! $id || ! DB::table('workspaces')->where('id', $id)->where('expires_at', '>', now())->exists()) {
             $limit = 'sessions:'.$request->ip();
-            abort_if(Illuminate\Support\Facades\RateLimiter::tooManyAttempts($limit, 6), 429, 'Session creation limit reached. Try later.');
-            Illuminate\Support\Facades\RateLimiter::hit($limit, 3600);
+            abort_if(RateLimiter::tooManyAttempts($limit, 6), 429, 'Session creation limit reached. Try later.');
+            RateLimiter::hit($limit, 3600);
             $id = app(DemoService::class)->create();
             $request->session()->put('workspace', $id);
             $request->session()->regenerate();

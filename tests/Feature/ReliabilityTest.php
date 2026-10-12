@@ -145,4 +145,10 @@ class ReliabilityTest extends TestCase
         $this->assertSame(0, DB::table('chunks')->count());
         $this->assertFalse(Storage::exists('test.pdf'));
     }
+
+    public function test_new_session_state_is_initialized_server_side(): void
+    {
+        $this->getJson('/api/state')->assertOk()->assertJsonStructure(['documents', 'expires_at', 'model']);
+        $this->assertSame(1, DB::table('workspaces')->count());
+    }
 }
