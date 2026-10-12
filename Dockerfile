@@ -17,4 +17,4 @@ USER www-data
 CMD ["php-fpm"]
 FROM nginx:1.28-alpine AS web
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=app /var/www/html/public /var/www/html/public
+COPY --chown=nginx:nginx --from=app /var/www/html/public /var/www/html/public
