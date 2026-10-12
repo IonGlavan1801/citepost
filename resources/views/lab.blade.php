@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="csrf-token" content="{{ csrf_token() }}"><meta name="robots" content="noindex,nofollow"><title>CITEPOST — RAG Reliability Lab · Syslora</title><meta name="description" content="Inspect retrieval, verify citations and measure when your RAG should refuse to answer.">@vite(['resources/js/app.js'])</head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="csrf-token" content="{{ csrf_token() }}"><meta name="robots" content="noindex,nofollow"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><title>CITEPOST — RAG Reliability Lab · Syslora</title><meta name="description" content="Inspect retrieval, verify citations and measure when your RAG should refuse to answer.">@vite(['resources/js/app.js'])</head>
 <body x-data="lab">
 <header class="topbar"><a class="wordmark" href="/" aria-label="Citepost home"><span class="logo">C<span>]</span></span>CITEPOST<span class="brand-detail">/ RELIABILITY LAB</span></a><div class="top-actions"><span class="badge"><i></i> PUBLIC DEMO</span><a href="https://syslora.com/work" class="quiet-link">Built by Syslora ↗</a><a href="https://github.com/IonGlavan1801/citepost" class="quiet-link">Source ↗</a></div></header>
 <main>

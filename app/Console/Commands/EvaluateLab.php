@@ -55,6 +55,9 @@ class EvaluateLab extends Command
                     $fp += ($case['answerable'] && $abstains) ? 1 : 0;
                     $fn += (! $case['answerable'] && ! $abstains) ? 1 : 0;
                     if ($this->option('answers')) {
+                        if ($trace['evidence']['sufficient']) {
+                            sleep(6);
+                        }
                         $a = app(AnswerService::class)->generate($case['question'], $trace);
                         $row['answer'] = $a;
                         $cost += $a['usage']['estimated_cost'];
