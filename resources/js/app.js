@@ -3,6 +3,8 @@ import "../css/app.css";
 window.Alpine = Alpine;
 Alpine.data("lab", () => ({
     state: { documents: [], evaluation: null },
+    stateStatus: "loading",
+    refreshing: false,
     collection: "manual",
     mode: "hybrid_rerank",
     failure: "none",
@@ -43,10 +45,16 @@ Alpine.data("lab", () => ({
         return data;
     },
     async refresh() {
+        if (this.refreshing) return;
+        this.refreshing = true;
+        this.stateStatus = "loading";
         try {
             this.state = await this.api("state");
-        } catch (e) {
-            this.error = e.message;
+            this.stateStatus = "ready";
+        } catch {
+            this.stateStatus = "error";
+        } finally {
+            this.refreshing = false;
         }
     },
     async ask(text) {
