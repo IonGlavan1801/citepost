@@ -32,6 +32,14 @@ jobs:
       group: citepost-production
       cancel-in-progress: false
     steps:
+      - name: Join the tailnet
+        uses: tailscale/github-action@v4
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+          ping: ${{ secrets.DEPLOY_HOST }}
+
       - name: Deploy after checks
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
